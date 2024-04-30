@@ -1,0 +1,22 @@
+{
+  "name": "book-record-management-build",
+  "version": "1.0.0",
+  "description": "\"# Book-Record-Management-Build\"",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/bjmanish/Book-Record-Management-Build.git)"
+  },
+  "author": "Manish",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
