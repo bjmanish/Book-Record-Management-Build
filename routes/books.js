@@ -5,6 +5,82 @@ const {users} = require("../data/users.json");
 
 const router = express.Router();
 
+
+/*
+* Route: /
+*Methods : GET
+*Description: Get all books 
+*Access: Public
+* Parameters:None
+*/
+//http://localhost:8081/books
+router.get("/",(req,res)=>{
+    res.status(200).json({
+        success: true,
+        data: books,
+    });
+});
+
+
+
+/*
+* Route: /books/:id
+*Methods : GET
+*Description: Get book by their id
+*Access: Public
+* Parameters: id
+*/
+
+router.get("/:id",(req,res)=>{
+    const {id} = req.params;
+    const book = books.find((book_id) => book_id.id === id);
+
+    if(!book){
+        return res.status(404).json({
+            success: false,
+            message: "book not found!",
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        message: "books found.",
+        data: book,
+    });
+});
+
+/*
+* Route: /books
+* Methods : POST
+* Description: adding a new book 
+* Access: public
+* Parameters:None
+* data: id, name, Author, genre, price, publisher
+*/
+router.post("/",(req,res)=>{
+    //const {id, name, Author, genre, price, publisher } = req.body;
+    const {data} = req.body;
+    if(!data){
+        return res.status(404).json({
+            success: false,
+            message: "No data to add a book!"
+        });
+    }
+    const book = books.find((book_id) => book_id.id === data.id);
+    if(book){
+        return res.status(200).json({
+            success : false,
+            message: "Book_Id already exists!",
+        });
+    }
+    const allBooks = [...books,data];
+    //books.push({id, name, Author, genre, price, publisher});
+    return res.status(201).json({
+        success: true,
+        message: "book added success",
+        data: allBooks,
+    });
+});
+
 /*
 * Route: /books/issued
 *Methods : GET
@@ -41,72 +117,5 @@ router.get("/issued/by-user",(req,res) =>{
         data: issuedBook,
     });
 });
-
-
-/*
-* Route: /
-*Methods : GET
-*Description: Get all books 
-*Access: Public
-* Parameters:None
-*/
-//http://localhost:8081/books
-router.get("/",(req,res)=>{
-    res.status(200).json({
-        success: true,
-        data: books,
-    });
-});
-
-/*
-* Route: /books/:id
-*Methods : GET
-*Description: Get book by their id
-*Access: Public
-* Parameters: id
-*/
-
-router.get("/:id",(req,res)=>{
-    const {id} = req.params;
-    const book = books.find((book_id) => book_id.id === id);
-
-    if(!book){
-        return res.status(404).json({
-            success: false,
-            message: "book not found!",
-        });
-    }
-    return res.status(200).json({
-        success: true,
-        message: "books found.",
-        data: book,
-    });
-});
-
-/*
-* Route: /books
-*Methods : POST
-*Description: create/add book 
-*Access: public
-* Parameters:None
-*/
-router.post("/",(req,res)=>{
-    const {id, name, Author, genre, price, publisher, } = req.body;
-    const book = books.find((book_id) => book_id.id===id);
-    if(book){
-        return res.status(200).json({
-            success : false,
-            message: "Books already exists for this book_id ",
-        });
-    }
-    books.push({id, name, Author, genre, price, publisher,});
-    return res.status(200).json({
-        success: true,
-        message: "book added success",
-        data: books,
-    });
-});
-
-
 
 module.exports = router;
