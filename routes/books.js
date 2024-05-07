@@ -21,16 +21,13 @@ router.get("/",(req,res)=>{
     });
 });
 
-
-
-/*
-* Route: /books/:id
+/**
+*Route: /books/:id
 *Methods : GET
 *Description: Get book by their id
 *Access: Public
-* Parameters: id
-*/
-
+*Parameters: id
+**/
 router.get("/:id",(req,res)=>{
     const {id} = req.params;
     const book = books.find((book_id) => book_id.id === id);
@@ -116,6 +113,53 @@ router.get("/issued/by-user",(req,res) =>{
         message: "users with the issued books.",
         data: issuedBook,
     });
+});
+
+/*
+* Route: /updateBook/:id
+*Methods : PUT
+*Description: updating a book by their id
+*Access: Public
+* Parameters: id
+* data: id, name, Author, genre, price, publisher
+*/
+router.put("/updateBook/:id", (req,res) =>{
+    const {id} = req.params;
+    const {data} = req.body;
+
+    const book = books.find((Book_id) => Book_id.id === id);
+    if(!book){
+        return res.status(400).json({
+            success: false,
+            message: "book not exist for this id",
+        });
+    }
+    const updateBook = books.map((each)=>{
+        if(each.id === id){
+            return {
+                ...each,
+                ...data
+            }
+        }
+        return each;
+    });
+    return res.status(201).json({
+        success: true,
+        message: "book data updated success.",
+        data: updateBook,
+    });
+
+});
+
+/*
+* Route: /books/issued/WithFine
+*Methods : GET
+*Description: get issued book with fine
+*Access: Public
+* Parameters: none
+*/
+router.get("/issued/WithFine", (req,res) =>{
+
 });
 
 module.exports = router;
