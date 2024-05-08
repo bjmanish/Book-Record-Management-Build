@@ -150,7 +150,7 @@ router.get("/subscription-details/:id", (req,res) =>{
             message: "users not exist for any subscription with id",
         });
     }
-    const getDateInDays = (data = "")=>{
+    const getDateInDays = (data = "") => {
         let date;
         if(data === ""){
             date = new Date();
@@ -158,22 +158,55 @@ router.get("/subscription-details/:id", (req,res) =>{
         else{
             date = new Date(data);
         }
-        let days = Math.floor(data / (1000 * 60 * 60 * 24));
+        let days = Math.floor(date / (1000 * 60 * 60 * 24));
         return days;
     };
-
-    const getsubscriptionType = (date) =>{
-        if(user.subscriptionType = "Basic"){
+    
+    const SubscriptionType = (date) =>{
+        if( (user.subscriptionType) === "Basic"){
             date = date + 90;
         }
-        else if(user.subscriptionType = "Standard"){
+        else if( (user.subscriptionType) === "Standard"){
             date = date + 180;
         }
-        if(user.subscriptionType = "Premium"){
-            date = date +365;
+        if( (user.subscriptionType) === "Premium"){
+            date = date + 365;
         }
         return date;
     };
+    
+    //Jan 1 1970 UTC
+    let returnDateInDays = getDateInDays(user.returnDate);
+    let currentDateInDays = getDateInDays();
+    let subscriptionDateInDays = getDateInDays(user.subscriptionDate);
+    let subscriptionExpiry = SubscriptionType(subscriptionDateInDays);
+    const data = {
+        ...user,
+        isSubscriptionExpired : subscriptionExpiry <= currentDateInDays,
+        
+        daysLeftForExpiration : 
+        subscriptionExpiry <= currentDateInDays 
+        ? 0 
+        : subscriptionExpiry - currentDateInDays,
+        
+        fine :
+            returnDateInDays < currentDateInDays
+            ? subscriptionExpiry <= currentDateInDays
+            ? 100
+            : 50
+            : 0,
+    };
+    
+    // console.log("currentDate in days",currentDate);
+    // console.log("returnDate in days",returnDate);
+    // console.log("subscription expiry Date in days",subscriptionExpiry);
+    // console.log("subscription Date in days",subscriptionDate);
+
+    return res.status(200).json({
+        success: true,
+        message: "Subscription detail for the user is:",
+        data,
+    });
     
 });
 
